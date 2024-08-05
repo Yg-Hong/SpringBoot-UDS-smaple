@@ -19,7 +19,7 @@ public class MessageController {
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
 
-            socket.connect(new AFUNIXSocketAddress(new File(SOCKET_PATH)));
+            socket.connect(AFUNIXSocketAddress.of(new File(SOCKET_PATH)));
 
             writer.write(request.getMessage());
             writer.newLine();
