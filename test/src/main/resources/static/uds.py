@@ -20,9 +20,6 @@ get_request = (
     "\r\n"
 )
 
-# 잠깐 실행 대기
-time.sleep(10)
-
 response = send_request(get_request)
 print("GET response:", response)
 
