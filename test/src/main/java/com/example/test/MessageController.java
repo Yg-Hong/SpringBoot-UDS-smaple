@@ -2,10 +2,7 @@ package com.example.test;
 
 import org.newsclub.net.unix.AFUNIXSocket;
 import org.newsclub.net.unix.AFUNIXSocketAddress;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 
@@ -16,7 +13,7 @@ public class MessageController {
     private static final String SOCKET_PATH = "/tmp/my_unix_socket";
 
     @PostMapping("/send")
-    public String sendMessage(@RequestParam MessageRequest request) {
+    public String sendMessage(@RequestBody MessageRequest request) {
         String response = "";
         try (AFUNIXSocket socket = AFUNIXSocket.newInstance();
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
