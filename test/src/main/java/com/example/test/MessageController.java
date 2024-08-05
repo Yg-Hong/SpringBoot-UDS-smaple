@@ -30,10 +30,10 @@ public class MessageController {
 
         Path socketPath = Path.of(System.getProperty("user.home"))
                 .resolve("test.sock");
+        System.out.println(socketPath.toString());
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(socketPath);
 
         try {
-            Files.deleteIfExists(socketPath);
 
             ServerSocketChannel serverChannel = ServerSocketChannel
                     .open(StandardProtocolFamily.UNIX);
@@ -65,7 +65,6 @@ public class MessageController {
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(socketPath);
 
         try {
-            Files.deleteIfExists(socketPath);
 
             // Sending
             SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX);
