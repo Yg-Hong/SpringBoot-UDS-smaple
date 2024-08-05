@@ -1,0 +1,39 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js to Spring Boot</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <input v-model="message" placeholder="Enter a message">
+    <button @click="sendMessage">Send</button>
+    <p>Response: {{ response }}</p>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        message: '',
+        response: ''
+      },
+      methods: {
+        sendMessage() {
+          axios.post('http://localhost:8080/api/send', { message: this.message })
+            .then(response => {
+              this.response = response.data;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
