@@ -1,10 +1,7 @@
 package com.example.test;
 
 import org.apache.catalina.Server;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.BindException;
@@ -21,6 +18,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class MessageController {
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 
     @PostMapping("/receive")
     public void receiveMessage(@RequestBody MessageRequest request) {
