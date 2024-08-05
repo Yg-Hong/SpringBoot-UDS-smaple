@@ -24,8 +24,8 @@ public class MessageController {
         return "test";
     }
 
-    @PostMapping("/receive")
-    public void receiveMessage(@RequestBody MessageRequest request) {
+    @GetMapping("/receive")
+    public void receiveMessage() {
         String response = "";
 
         Path socketPath = Path.of(System.getProperty("user.home"))
@@ -57,8 +57,8 @@ public class MessageController {
 //        return response;
     }
 
-    @PostMapping("/send")
-    public void sendMessage(@RequestBody MessageRequest request) {
+    @GetMapping("/send")
+    public void sendMessage() {
 
         Path socketPath = Path.of(System.getProperty("user.home"))
                 .resolve("test.sock");
