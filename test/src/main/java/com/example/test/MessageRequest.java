@@ -1,15 +1,10 @@
 package com.example.test;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+@Data
+@RequiredArgsConstructor
 public class MessageRequest {
     private String message;
-
-    // Getter and Setter
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
 }
