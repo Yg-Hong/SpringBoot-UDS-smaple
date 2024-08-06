@@ -22,14 +22,12 @@ public class MessageController {
 
     @PostMapping("/connect")
     public String connect() throws IOException {
-        client = new ReadFileHandleClient();
+        client = new ReadWriteClient();
         SocketAddress endpoint = DemoHelper.socketAddress(SOCKET_PATH);
         try {
             client.connect(endpoint);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            client.close();
         }
 
         return "Connect Success on " + SOCKET_PATH;
