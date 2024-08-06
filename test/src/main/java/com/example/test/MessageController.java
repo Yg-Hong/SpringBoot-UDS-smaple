@@ -62,7 +62,7 @@ public class MessageController {
             return "UDS Not Connected";
         }
 
-        String reussponse = "Initial String";
+        String response = "Initial String";
 
         try (InputStream in = sock.getInputStream();
              DataInputStream dis = new DataInputStream(in)
