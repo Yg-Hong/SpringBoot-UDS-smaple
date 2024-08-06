@@ -7,8 +7,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#define SOCKET_PATH "/tmp/my_unix_socket"
+#define SOCKET_PATH "/tmp/my_unix_socket1.sock"
 #define BUFFER_SIZE 256
+#define BACKLOG 5
 
 void handle_client(int client_socket) {
     char buffer[BUFFER_SIZE];
@@ -32,15 +33,15 @@ void handle_client(int client_socket) {
     close(client_socket);
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
     int server_socket, client_socket;
     struct sockaddr_un server_addr;
+    ssize_t numRead; 
 
     // If there are socket file which has same name already
     if(access(SOCKET_PATH, F_OK) == 0) {
         unlink(SOCKET_PATH);
     }
-
 
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     if(server_socket < 0) {
@@ -57,7 +58,10 @@ int main(void) {
         exit(1);
     }
 
-    listen(server_socket, 5);
+    if(listen(server_socket, BACKLOG) < 0) {
+        perror("ERROR on listening");
+        exit(1);
+    }
 
     printf("Server is listening on %s\n", SOCKET_PATH);
 
@@ -68,8 +72,20 @@ int main(void) {
             exit(1);
         }
 
-        handle_client(client_socket);
+        while((numRead= read(cfd, buf, BUFFER_SIZE)) > 0) {
+            if(write(STDOUT_FILENO, buf, numRead) != numRead) {
+                break;
+            }
+        }
+
+        if(numRead < 0) {
+            perror("ERROR on reading")
+        }
+
+        // handle_client(client_socket);
     }
+
+    printf("Server is unconected on %s\n", SOCKET_PATH);
 
     close(server_socket);
     unlink(SOCKET_PATH);
