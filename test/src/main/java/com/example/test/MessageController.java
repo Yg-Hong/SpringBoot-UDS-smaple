@@ -41,32 +41,11 @@ public class MessageController {
             return "UDS Not Connected";
         }
 
-        try (InputStream in = sock.getInputStream();
-             OutputStream out = sock.getOutputStream();
-             DataOutputStream dos = new DataOutputStream(out);
-             DataInputStream dis = new DataInputStream(in);
-        ) {
-//            byte[] buf = new byte[1024];
-//            int read = in.read(buf);
-//
-//            log.info("Server said: {}", new String(buf, 0, read, StandardCharsets.UTF_8));
-//            log.info("Replying to server...");
-            out.write("Hello Server".getBytes(StandardCharsets.UTF_8));
+        try (OutputStream out = sock.getOutputStream()) {
+            out.write(request.getMessage().getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             log.info("Now reading numbers from the server...");
-//            while (!Thread.interrupted()) {
-//                int number = dis.readInt();
-//                if (number == -123) {
-//                    break;
-//                }
-//
-//                log.info("Server sent... : {}", number);
-//
-//                int ourNumber = number * 2;
-//                log.info("Sending back : {}", ourNumber);
-//                dos.writeInt(ourNumber);
-//            }
         } catch (IOException e) {
             log.info("ERROR...");
             throw e;
@@ -74,6 +53,38 @@ public class MessageController {
 
         log.info("End of communication");
         return "End of communication";
+    }
+
+    @GetMapping("/read")
+    public String read() throws IOException {
+        if (!sock.isConnected()) {
+            log.info("UDS NOT CONNECTED!!!");
+            return "UDS Not Connected";
+        }
+
+        String reussponse = "Initial String";
+
+        try (InputStream in = sock.getInputStream();
+             DataInputStream dis = new DataInputStream(in)
+        ) {
+            byte[] buf = new byte[2048];
+            int read = in.read(buf);
+
+            response = new String(buf, 0, read, StandardCharsets.UTF_8);
+
+            log.info("Server said: {}", response);
+            log.info("Replying to server...");
+            while (!Thread.interrupted()) {
+                int number = dis.read();
+                if (number == -123) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return response;
     }
 
     private SocketAddress getSocketAddress(String socketName) throws IOException {
