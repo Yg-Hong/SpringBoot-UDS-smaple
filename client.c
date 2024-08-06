@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     }
 
     while((numRead = read(STDIN_FILENO, buf, BUFFER_SIZE)) > 0) {
-        if(write(sfd, buf, numREad) != numRead) {
+        if(write(server_socket, buf, numRead) != numRead) {
             break;
         }
     }
