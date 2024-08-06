@@ -23,7 +23,7 @@ public class MessageController {
     @PostMapping("/connect")
     public String connect() throws IOException {
         client = new ReadFileHandleClient();
-        SocketAddress endpoint = AFSocketAddress.of(URI.create(SOCKET_PATH));
+        SocketAddress endpoint = DemoHelper.socketAddress(SOCKET_PATH);
         try {
             client.connect(endpoint);
         } catch (IOException e) {
