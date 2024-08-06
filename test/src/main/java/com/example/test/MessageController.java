@@ -46,27 +46,27 @@ public class MessageController {
              DataOutputStream dos = new DataOutputStream(out);
              DataInputStream dis = new DataInputStream(in);
         ) {
-            byte[] buf = new byte[1024];
-            int read = in.read(buf);
-
-            log.info("Server said: {}", new String(buf, 0, read, StandardCharsets.UTF_8));
-            log.info("Replying to server...");
+//            byte[] buf = new byte[1024];
+//            int read = in.read(buf);
+//
+//            log.info("Server said: {}", new String(buf, 0, read, StandardCharsets.UTF_8));
+//            log.info("Replying to server...");
             out.write("Hello Server".getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             log.info("Now reading numbers from the server...");
-            while (!Thread.interrupted()) {
-                int number = dis.readInt();
-                if (number == -123) {
-                    break;
-                }
-
-                log.info("Server sent... : {}", number);
-
-                int ourNumber = number * 2;
-                log.info("Sending back : {}", ourNumber);
-                dos.writeInt(ourNumber);
-            }
+//            while (!Thread.interrupted()) {
+//                int number = dis.readInt();
+//                if (number == -123) {
+//                    break;
+//                }
+//
+//                log.info("Server sent... : {}", number);
+//
+//                int ourNumber = number * 2;
+//                log.info("Sending back : {}", ourNumber);
+//                dos.writeInt(ourNumber);
+//            }
         } catch (IOException e) {
             log.info("ERROR...");
             throw e;
