@@ -18,8 +18,8 @@ public class MessageController {
     private static final String SOCKET_PATH = "/tmp/my_unix_socket1.sock";
     private AFUNIXSocket sock;
 
-    @PostMapping("/connect/{socketName}")
-    public String connect(@PathVariable String socketName) throws IOException {
+    @PostMapping("/connect")
+    public String connect() throws IOException {
         SocketAddress endpoint = getSocketAddress(SOCKET_PATH);
         sock = AFUNIXSocket.connectTo(AFUNIXSocketAddress.of(endpoint));
         log.info("UDS Connected Completely to {}", endpoint);
