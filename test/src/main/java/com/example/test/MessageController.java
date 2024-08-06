@@ -20,7 +20,7 @@ public class MessageController {
 
     @PostMapping("/connect/{socketName}")
     public String connect(@PathVariable String socketName) throws IOException {
-        SocketAddress endpoint = getSocketAddress(socketName);
+        SocketAddress endpoint = getSocketAddress(SOCKET_PATH);
         sock = AFUNIXSocket.connectTo(AFUNIXSocketAddress.of(endpoint));
         log.info("UDS Connected Completely to {}", endpoint);
         return "UDS Connected Completely to " + endpoint;
