@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     client_addr.sun_family = AF_UNIX;
     strncpy(client_addr.sun_path, SOCKET_PATH, sizeof(client_addr.sun_path) - 1);
 
-    if(connect(server_socket, (struct sockaddr_un *) &client_addr, sizeof(struct sockaddr_un)) < 0) {
+    if(connect(server_socket, (struct sockaddr *) &client_addr, sizeof(struct sockaddr_un)) < 0) {
         perror("ERROR on connecting");
         exit(1);
     }
