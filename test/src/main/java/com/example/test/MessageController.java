@@ -1,35 +1,44 @@
 package com.example.test;
 
+import lombok.extern.slf4j.Slf4j;
+import org.newsclub.net.unix.AFSocketAddress;
 import org.newsclub.net.unix.AFUNIXSocket;
 import org.newsclub.net.unix.AFUNIXSocketAddress;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.URI;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class MessageController {
 
-    private static final String SOCKET_PATH = "/tmp/my_unix_socket";
+    private static final String SOCKET_PATH = "/tmp/my_unix_socket1.sock";
+    private UdsSocketBase client;
 
-    @PostMapping("/send")
-    public String sendMessage(@RequestBody MessageRequest request) {
-        String response = "";
-        try (AFUNIXSocket socket = AFUNIXSocket.newInstance();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-
-            socket.connect(AFUNIXSocketAddress.of(new File(SOCKET_PATH)));
-
-            writer.write(request.getMessage());
-            writer.newLine();
-            writer.flush();
-
-            response = reader.readLine();
+    @PostMapping("/connect")
+    public String connect() throws IOException {
+        client = new ReadFileHandleClient();
+        SocketAddress endpoint = AFSocketAddress.of(URI.create(SOCKET_PATH));
+        try {
+            client.connect(endpoint);
         } catch (IOException e) {
-            e.printStackTrace();
-            response = "Error: " + e.getMessage();
+            throw new RuntimeException(e);
+        } finally {
+            client.close();
         }
-        return response;
+
+        return "Connect Success on " + SOCKET_PATH;
+    }
+
+    @PostMapping("/disconnect")
+    public String disconnect() throws IOException {
+        client.close();
+
+        return "Disconnect Success";
     }
 }
