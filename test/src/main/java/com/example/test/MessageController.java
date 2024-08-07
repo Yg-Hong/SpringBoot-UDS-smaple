@@ -42,7 +42,7 @@ public class MessageController {
         }
 
         try (OutputStream out = sock.getOutputStream()) {
-            log.info("Now reading string from the server...");
+            log.info("Now writing string({}) to the server...", request.getMessage());
 
             out.write(request.getMessage().getBytes(StandardCharsets.UTF_8));
             out.flush();
