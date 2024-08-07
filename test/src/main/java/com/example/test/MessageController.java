@@ -23,14 +23,14 @@ public class MessageController {
         SocketAddress endpoint = getSocketAddress(SOCKET_PATH);
         sock = AFUNIXSocket.connectTo(AFUNIXSocketAddress.of(endpoint));
         log.info("UDS Connected Completely to {}", endpoint);
-        return "UDS Connected Completely to " + endpoint;
+        return "UDS Connected Completely to " + endpoint + "\n";
     }
 
     @PostMapping("/disconnect")
     public String disconnect() throws IOException {
         sock.close();
         log.info("UDS Disconnected Completely");
-        return "UDS Disconnected Completely";
+        return "UDS Disconnected Completely\n";
     }
 
     @PostMapping("/write")
@@ -45,14 +45,14 @@ public class MessageController {
             out.write(request.getMessage().getBytes(StandardCharsets.UTF_8));
             out.flush();
 
-            log.info("Now reading numbers from the server...");
+            log.info("Now reading string from the server...");
         } catch (IOException e) {
-            log.info("ERROR...");
+            log.info("ERROR...{}", e.getMessage());
             throw e;
         }
 
         log.info("End of communication");
-        return "End of communication";
+        return "End of communication\n";
     }
 
     @GetMapping("/read")
