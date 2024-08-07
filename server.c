@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #define SOCKET_PATH "/tmp/my_unix_socket.sock"
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 128
 #define BACKLOG 5
 
 void handle_client(int client_socket) {
@@ -75,7 +75,14 @@ int main(int argc, char *argv[]) {
 
         while((numRead = read(client_socket, buf, BUFFER_SIZE)) > 0) {
             buf[numRead] = '\0';
+
+            // For log
             if(write(STDOUT_FILENO, buf, numRead) != numRead) {
+                break;
+            }
+
+            // For Echo
+            if(write(client_socket, buf, BUFFER_SIZE) != numRead) {
                 break;
             }
         }
