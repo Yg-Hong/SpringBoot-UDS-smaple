@@ -46,6 +46,11 @@ int main(int argc, char *argv[]) {
     ssize_t numRead;
     char buf[BUFFER_SIZE];
 
+    // If there are socket file which has same name already
+    if(access(SOCKET_PATH, F_OK) == 0) {
+        unlink(SOCKET_PATH);
+    }
+
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     if(server_socket < 0) {
         perror("ERROR opening socket");
@@ -55,11 +60,6 @@ int main(int argc, char *argv[]) {
     memset(&server_addr, 0, sizeof(struct sockaddr_un));
     server_addr.sun_family = AF_UNIX;
     snprintf(server_addr.sun_path, sizeof(server_addr.sun_path), "%s", SOCKET_PATH);
-
-    // If there are socket file which has same name already
-    if(access(SOCKET_PATH, F_OK) == 0) {
-        unlink(SOCKET_PATH);
-    }
 
     if(bind(server_socket, (struct sockaddr *) &server_addr, sizeof(struct sockaddr_un)) < 0) {
         perror("ERROR on binding");
