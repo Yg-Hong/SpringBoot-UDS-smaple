@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
             }
 
             // For Echo
-            if(write(client_socket, buf, BUFFER_SIZE) != numRead) {
+            if(write(client_socket, buf, numRead) != numRead) {
                 break;
             }
         }
