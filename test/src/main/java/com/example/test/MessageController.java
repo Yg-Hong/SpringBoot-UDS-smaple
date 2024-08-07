@@ -42,10 +42,10 @@ public class MessageController {
         }
 
         try (OutputStream out = sock.getOutputStream()) {
+            log.info("Now reading string from the server...");
+
             out.write(request.getMessage().getBytes(StandardCharsets.UTF_8));
             out.flush();
-
-            log.info("Now reading string from the server...");
         } catch (IOException e) {
             log.info("ERROR...{}", e.getMessage());
             throw e;

@@ -32,10 +32,11 @@ void handle_client(int client_socket) {
         exit(1);
     }
 
-    if(strcmp(buffer, "End Socket Connection") == 0) {
-        printf("Closing connectino as per client request \n");
-        close(client_socket);
-    }
+    // if(strcmp(buffer, "End Socket Connection") == 0) {
+    //     printf("Closing connection as per client request \n");
+    //     close(client_socket);
+    // }
+    close(client_socket);
 }
 
 int main(int argc, char *argv[]) {
