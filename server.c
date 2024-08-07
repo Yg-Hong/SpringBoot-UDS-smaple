@@ -11,33 +11,26 @@
 #define BUFFER_SIZE 1024
 #define BACKLOG 5
 
-char last_message[BUFFER_SIZE] = {0};
+void handle_client(int client_socket) {
+    char buffer[BUFFER_SIZE];
+    int n = read(client_socket, buffer, BUFFER_SIZE - 1);
 
-void daemonize() {
-    pid_t pid, sid;
-
-    pid = fork();
-    if (pid < 0) {
-        exit(EXIT_FAILURE);
+    if(n < 0) {
+        perror("ERROR reading from socket");
+        exit(1);
     }
-    if (pid > 0) {
-        exit(EXIT_SUCCESS);
-    }
+    buffer[n] = '\0';
 
-    umask(0);
+    printf("Recieved message: %s\n", buffer);
 
-    sid = setsid();
-    if (sid < 0) {
-        exit(EXIT_FAILURE);
-    }
-
-    if ((chdir("/")) < 0) {
-        exit(EXIT_FAILURE);
+    // Echo the message back to the client(Spring server)
+    n = write(client_socket, buffer, strlen(buffer));
+    if(n < 0) {
+        perror("ERROR writing to socket");
+        exit(1);
     }
 
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+    close(client_socket);
 }
 
 int main(int argc, char *argv[]) {
@@ -45,20 +38,11 @@ int main(int argc, char *argv[]) {
     struct sockaddr_un server_addr;
     ssize_t numRead;
     char buf[BUFFER_SIZE];
-    FILE *log_file;
-
-    // log file config
-    log_file = fopen("~/test/Server.log", "a+");
-    if(log_file == NULL) {
-        exit(EXIT_FAILURE);
-    }
 
     // If there are socket file which has same name already
     if(access(SOCKET_PATH, F_OK) == 0) {
         unlink(SOCKET_PATH);
     }
-
-    daemonize();
 
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     if(server_socket < 0) {
@@ -71,56 +55,41 @@ int main(int argc, char *argv[]) {
     strncpy(server_addr.sun_path, SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
 
     if(bind(server_socket, (struct sockaddr *) &server_addr, sizeof(struct sockaddr_un)) < 0) {
-        fprintf(log_file, "ERROR on binding\n");
-        fclose(log_file);
+        perror("ERROR on binding");
         exit(1);
     }
 
     if(listen(server_socket, BACKLOG) < 0) {
-        fprintf(log_file, "ERROR on listening\n");
-        fclose(log_file);
+        perror("ERROR on listening");
         exit(1);
     }
 
-    fprintf(log_file, "Server is listening on %s\n", SOCKET_PATH);
-    fflush(log_file);
+    printf("Server is listening on %s\n", SOCKET_PATH);
 
     while(1) {
         client_socket = accept(server_socket, NULL, NULL);
         if(client_socket < 0) {
-            fprintf(log_file, "ERROR on accept\n");
-            fclose(log_file);
+            perror("ERROR on accept");
             exit(1);
         }
 
-        while((numRead= read(client_socket, buf, BUFFER_SIZE)) > 0) {
-            buf[numRead] = '\n';
-            fprintf(log_file, "Received: %s\n", buf);
-            fflush(log_file);
-
-            // save the last message
-            strncpy(last_message, buf, BUFFER_SIZE);
-
+        while((numRead = read(client_socket, buf, BUFFER_SIZE)) > 0) {
+            buf[numRead] = '\0';
             if(write(STDOUT_FILENO, buf, numRead) != numRead) {
-                fprintf(log_file, "ERROR on writing\n");
-                fflush(log_file);
                 break;
             }
         }
 
         if(numRead < 0) {
-            fprintf(log_file, "ERROR on reading\n");
-            fflush(log_file);
+            perror("ERROR on reading");
         }
 
         close(client_socket);
     }
 
-    fprintf(log_file, "Server is disconnected on %s\n", SOCKET_PATH);
-    fflush(log_file);
+    printf("Server is unconected on %s\n", SOCKET_PATH);
 
     close(server_socket);
     unlink(SOCKET_PATH);
-    fclose(log_file);
     return 0;
 }
