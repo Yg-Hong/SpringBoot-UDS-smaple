@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
         }
 
         if(numRead < 0) {
-            perror("ERROR on reading")
+            perror("ERROR on reading");
         }
 
         // handle_client(client_socket);
