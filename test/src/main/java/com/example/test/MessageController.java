@@ -41,7 +41,8 @@ public class MessageController {
             return "UDS Not Connected";
         }
 
-        try (OutputStream out = sock.getOutputStream()) {
+        OutputStream out = sock.getOutputStream();
+        try {
             log.info("Now writing string({}) to the server...", request.getMessage());
 
             out.write(request.getMessage().getBytes(StandardCharsets.UTF_8));
