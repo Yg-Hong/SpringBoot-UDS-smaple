@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.newsclub.net.unix.AFSocketAddress;
 import org.newsclub.net.unix.AFUNIXSocket;
 import org.newsclub.net.unix.AFUNIXSocketAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -21,6 +22,9 @@ public class MessageController {
     private AFUNIXSocket sock;
     private OutputStream out;
     private InputStream in;
+
+    @Autowired
+    private SocketProvider socketProvider;
 
     @PostMapping("/connect")
     public String connect() throws IOException {
@@ -84,6 +88,17 @@ public class MessageController {
             log.error("Error reading from c server ... {}", e.getMessage());
         }
 
+        return response;
+    }
+
+
+    @PostMapping("/send")
+    public String sendMessage(@RequestBody MessageRequest request) throws IOException {
+        // Send a message and read the response
+        log.info("Client(Spring Boot) request \"{}\" to Server(c)", request.getMessage());
+        String response = socketProvider.sendMessage(request.getMessage());
+
+        log.info("Server(c) response \"{}\" to Client(Spring Boot)", response);
         return response;
     }
 
