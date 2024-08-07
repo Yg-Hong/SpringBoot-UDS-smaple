@@ -1,5 +1,6 @@
 package com.example.test;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.newsclub.net.unix.AFSocketAddress;
 import org.newsclub.net.unix.AFUNIXSocket;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class MessageController {
 
@@ -23,8 +25,7 @@ public class MessageController {
     private OutputStream out;
     private InputStream in;
 
-    @Autowired
-    private SocketProvider socketProvider;
+    private final SocketProvider socketProvider;
 
     @PostMapping("/connect")
     public String connect() throws IOException {

@@ -17,11 +17,11 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URI;
 
-@Component
 @Slf4j
+@Component
 public class SocketProvider {
 
-    private static final String SOCKET_PATH = "tmp/my_unix_socket.sock";
+    private static final String SOCKET_PATH = "/tmp/my_unix_socket.sock";
     private static final int BUFFER_SIZE = 256;
     private AFUNIXSocket sock;
     private OutputStream out;
@@ -33,6 +33,8 @@ public class SocketProvider {
         sock = AFUNIXSocket.connectTo(AFUNIXSocketAddress.of(endpoint));
         out = sock.getOutputStream();
         in = sock.getInputStream();
+
+        log.info("UDS Connected Completely to {}", endpoint);
     }
 
     @PreDestroy
