@@ -9,19 +9,26 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
 public class MessageController {
 
-    private static final String SOCKET_PATH = "/tmp/my_unix_socket1.sock";
+    private static final String SOCKET_PATH = "/tmp/my_unix_socket.sock";
     private AFUNIXSocket sock;
+    private OutputStream out;
+    private InputStream in;
 
     @PostMapping("/connect")
     public String connect() throws IOException {
         SocketAddress endpoint = getSocketAddress(SOCKET_PATH);
         sock = AFUNIXSocket.connectTo(AFUNIXSocketAddress.of(endpoint));
+        out = sock.getOutputStream();
+        in = sock.getInputStream();
+
         log.info("UDS Connected Completely to {}", endpoint);
         return "UDS Connected Completely to " + endpoint + "\n";
     }
@@ -35,13 +42,11 @@ public class MessageController {
 
     @PostMapping("/write")
     public String write(@RequestBody MessageRequest request) throws IOException {
-
-        if (!sock.isConnected()) {
+        if (sock == null || !sock.isConnected()) {
             log.info("UDS NOT CONNECTED!!!");
             return "UDS Not Connected";
         }
 
-        OutputStream out = sock.getOutputStream();
         try {
             log.info("Now writing string({}) to the server...", request.getMessage());
 
@@ -58,31 +63,25 @@ public class MessageController {
 
     @GetMapping("/read")
     public String read() throws IOException {
-        if (!sock.isConnected()) {
+        if (sock == null || !sock.isConnected()) {
             log.info("UDS NOT CONNECTED!!!");
             return "UDS Not Connected";
         }
 
         String response = "Initial String";
 
-        try (InputStream in = sock.getInputStream();
-             DataInputStream dis = new DataInputStream(in)
-        ) {
+        try (DataInputStream dis = new DataInputStream(in)) {
             byte[] buf = new byte[2048];
-            int read = in.read(buf);
+            int read = dis.read(buf);
 
-            response = new String(buf, 0, read, StandardCharsets.UTF_8);
-
-            log.info("Server said: {}", response);
-            log.info("Replying to server...");
-            while (!Thread.interrupted()) {
-                int number = dis.read();
-                if (number == -123) {
-                    break;
-                }
+            if (read > 0) {
+                response = new String(buf, 0, read, StandardCharsets.UTF_8);
+                log.info("Server said: {}", response);
+            } else {
+                response = "No response from server";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error reading from c server ... {}", e.getMessage());
         }
 
         return response;
