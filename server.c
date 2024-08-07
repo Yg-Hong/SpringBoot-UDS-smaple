@@ -73,17 +73,17 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
 
-        // while((numRead= read(client_socket, buf, BUFFER_SIZE)) > 0) {
-        //     if(write(STDOUT_FILENO, buf, numRead) != numRead) {
-        //         break;
-        //     }
-        // }
+        while((numRead= read(client_socket, buf, BUFFER_SIZE)) > 0) {
+            if(write(STDOUT_FILENO, buf, numRead) != numRead) {
+                break;
+            }
+        }
 
         if(numRead < 0) {
             perror("ERROR on reading");
         }
 
-        handle_client(client_socket);
+        close(client_socket);
     }
 
     printf("Server is unconected on %s\n", SOCKET_PATH);
