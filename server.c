@@ -13,12 +13,6 @@
 #define BACKLOG             5
 #define SELECT_TIMEOUT      2
 
-typedef struct {
-	command_t header;
-	struct sockaddr_un clnt_addr;
-	char data[DATA_SIZE];
-} BYTE_ALIGNED message;
-
 void handle_client(int client_socket) {
     char buffer[BUFFER_SIZE];
     int n = read(client_socket, buffer, BUFFER_SIZE - 1);
@@ -42,8 +36,6 @@ void handle_client(int client_socket) {
         printf("Closing connectino as per client request \n");
         close(client_socket);
     }
-
-    // close(client_socket);
 }
 
 int main(int argc, char *argv[]) {
