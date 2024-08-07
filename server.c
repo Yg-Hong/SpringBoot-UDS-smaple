@@ -36,7 +36,8 @@ void handle_client(int client_socket) {
 int main(int argc, char *argv[]) {
     int server_socket, client_socket;
     struct sockaddr_un server_addr;
-    ssize_t numRead; 
+    ssize_t numRead;
+    char buf[BUFFER_SIZE];
 
     // If there are socket file which has same name already
     if(access(SOCKET_PATH, F_OK) == 0) {
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
 
-        while((numRead= read(cfd, buf, BUFFER_SIZE)) > 0) {
+        while((numRead= read(client_socket, buf, BUFFER_SIZE)) > 0) {
             if(write(STDOUT_FILENO, buf, numRead) != numRead) {
                 break;
             }
@@ -91,4 +92,3 @@ int main(int argc, char *argv[]) {
     unlink(SOCKET_PATH);
     return 0;
 }
-
