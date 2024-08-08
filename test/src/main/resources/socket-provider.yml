@@ -1,0 +1,2 @@
+socket-provider:
+  socket-path: /tmp/my_unix_socket.sock

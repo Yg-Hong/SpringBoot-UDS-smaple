@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.newsclub.net.unix.AFSocketAddress;
 import org.newsclub.net.unix.AFUNIXSocket;
 import org.newsclub.net.unix.AFUNIXSocketAddress;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -21,8 +22,11 @@ import java.net.URI;
 @Component
 public class SocketProvider {
 
-    private static final String SOCKET_PATH = "/tmp/my_unix_socket.sock";
-    private static final int BUFFER_SIZE = 256;
+    @Value("${socket-provider.socket-path}")
+    private String SOCKET_PATH;
+
+    @Value("${socket-provider.buffer-size}")
+    private int BUFFER_SIZE;
     private AFUNIXSocket sock;
     private OutputStream out;
     private InputStream in;

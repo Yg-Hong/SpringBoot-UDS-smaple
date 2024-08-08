@@ -5,6 +5,13 @@ spring:
   profiles:
     active: dev
 
+  config:
+    import: classpath:socket-provider.yml
+
 logging:
   level:
-    com.example.test: trace
+    com.example.test: info
+
+socket-provider:
+  socket-path: /tmp/my_unix_socket.sock
+  buffer-size: 256
