@@ -5,9 +5,6 @@ spring:
   profiles:
     active: dev
 
-  config:
-    import: classpath:socket-provider.yml
-
 logging:
   level:
     com.example.test: info
